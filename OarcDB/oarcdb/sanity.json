@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "project": {
+    "name": "OarcDB"
+  },
+  "api": {
+    "projectId": "c2xo2qhd",
+    "dataset": "production"
+  },
+  "plugins": [
+    "@sanity/base",
+    "@sanity/components",
+    "@sanity/default-layout",
+    "@sanity/default-login",
+    "@sanity/desk-tool",
+    "@sanity/vision"
+  ],
+  "parts": [
+    {
+      "name": "part:@sanity/base/schema",
+      "path": "./schemas/schema.js"
+    }
+  ]
+}

@@ -1,0 +1,301 @@
+body { background: white; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; position:absolute; top:0;bottom:0; left:0;right:0;}
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        /*body, #message { margin-top: 0; background: white; box-shadow: none; }*/
+        /*body { border-top: 16px solid #ffa100; }*/
+      }
+h1{
+    font-size:36px;
+    margin-top:12px;
+    margin-bottom:12px;
+}
+
+h1,h3{
+   color: #005588;
+}
+
+h2{
+        color:#3399CC;
+}
+.content h2,h3,h4{
+    margin-bottom:0px;
+    margin-top:1.5em;
+    
+
+}
+
+app .cta-button{
+    min-height:60px;
+    line-height:60px;
+    background-color:#f18800;
+    color:white;
+    text-decoration: none;
+    text-align:center;
+    display:inline-block;
+    box-sizing:border-box;
+    padding-left:24px;
+    padding-right:24px;
+    width:fit-content;
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+    margin-top:24px;
+}
+
+app a.cta-button, app a.cta-button:visited{
+    color:white;
+}
+
+app{
+    display:flex;
+    flex-direction: column;
+
+    min-height:100%;
+}
+
+app .footer, app .content{
+    padding:24px
+}
+
+app .footer{
+    flex:1;
+    /*background-color:#005588;*/
+    background-color:whitesmoke;
+    min-height:120px;
+}
+
+app .content{
+    padding-top:40px;
+    display:flex;
+    justify-content:center;
+    flex:1;
+}
+
+.content div{
+    display:none;
+}
+
+.content bio{
+    display:flex;
+    margin-bottom:40px;
+    align-items:flex-start;
+}
+
+.content bio{
+    display:flex;
+    margin-bottom:40px;
+    align-items:flex-start;
+}
+
+
+.content a,.content a:visited {
+
+    
+    color:#f97f00;
+    /*color:#f18800;*/
+    /*color:#3399CC;*/
+    /*color:#cc0099;*/
+    text-decoration:none;
+    cursor:pointer;
+}
+.content bio h1,
+.content bio h2,
+.content bio h3,
+.content bio h4 {
+    margin-top:0;
+    margin-bottom:0.5em;
+}
+.content bio biocontent{
+    margin-left:40px;
+}
+
+.content div.show, .content div.show div{
+    display:block;
+    /*min-width:60%;*/
+    max-width:850px;
+}
+
+.content div.show p{
+    max-width:960px;
+}
+
+.header{
+    flex:none;
+    display:flex;
+    flex-direction: row;
+    background:#3399CC;
+    justify-content: space-between
+}
+
+.header .topstuff{
+    height: 120px;
+    max-height:120px;
+
+    display:flex;      
+    min-height: 120px;
+    justify-content: space-between;
+}
+
+.header .topstuff .logo{
+    height: 65%;
+    margin-top: 20px;
+    margin-left: 24px;
+    cursor:pointer;
+
+}
+
+.content #team bio img{
+    filter: grayscale(100%);
+
+}
+
+.content #team  img{
+    width:250px;
+}
+
+.content #team partners {
+    display:block;
+    margin-bottom:40px;
+}
+
+.content #team partner{
+    margin-top:20px;
+    margin-bottom:20px;
+    display:block;
+}
+
+.content #team {
+    margin-top:40px;
+}
+
+.content #team img {
+    margin-bottom:8px;
+}
+
+.content #team bio img{
+    border-radius:50%;
+    width:250px;
+    max-height:250px;
+    filter: grayscale(100%);
+    /*margin-top:20px;*/
+}
+
+.content #team h1{
+    margin-top:60px;
+}
+
+.content p{
+    margin-top:2px;
+    margin-bottom:18px;
+}
+
+.header .menu{
+display:flex;
+flex-direction: row;
+    margin-right:24px;
+}
+
+.header .menu button, .header .menu a {
+font-size:16px;
+/*color: #007799;*/
+color:white;
+    background:transparent;
+    border:none;
+text-decoration: none;
+align-self: center;
+margin-left:8px;
+margin-right:8px;
+margin-top:40px;
+    cursor:pointer;
+}
+
+.menubutton{
+display:none;
+align-self: center;
+}
+
+
+
+@media (max-width: 640px) {
+
+.header{
+  height:120px;
+  flex-direction:column;
+  max-height:fit-content;
+}
+
+.header .topstuff{
+ height:120px;
+ max-height:120px;
+}
+
+.header .menu{
+  min-height:fit-content;
+  flex-direction:column;
+  display:none;
+}
+.header .menu.show{
+  display:flex;
+  padding:0;
+  margin:0;
+  height:fit-content;
+    box-sizing:border-box;
+
+}
+
+.header .menu.show a{
+  background-color:#005588;
+    border-top: 2px solid #3399CC;
+  color:white;
+  align-self: flex-start;
+  padding:12px;
+  height:50px;
+  padding-left:32px;
+  margin:0;
+  width:100%;
+    text-align: left;
+    z-index:1000;
+    box-sizing:border-box;
+}
+    
+.header .menu.show a:hover{
+    background-color:#004477;
+}
+    
+    app .content{
+        padding-top:24px;
+        justify-content:flex-start;
+    }
+
+.content bio{
+    flex-direction:column;
+}
+    
+.content bio biocontent{
+    margin-top:30px;
+    margin-left:0;
+}
+.menubutton{
+  display:block;
+  height:48px;
+  width:48px;
+  margin-right:24px;
+  background-color:transparent;
+  border:none;
+  background-image: url('../img/menubutton_white.svg');
+  background-size:24px;
+  background-position: 12px;
+  background-repeat:no-repeat;
+    margin-top:30px;
+}
+
+.hidden{
+  display:none;
+}
+}

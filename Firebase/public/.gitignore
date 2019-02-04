@@ -1,0 +1,5 @@
+.vscode
+bower_components
+content/blog/articles/2018-03-30-osgeo.json
+content/blog/articles/2018-03-30-osgeo.md
+firebase-debug.log

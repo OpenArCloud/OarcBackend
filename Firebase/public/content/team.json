@@ -1,0 +1,63 @@
+{
+    "team":[
+        {
+            "name":"Jan-Erik Vinje",
+            "title":"Main contact & founder of Open-ARCloud",
+            "img":"img/bio_jan-erik.png",
+            "bio":"Jan-Erik Vinje is a senior full-stack developer at <a href=\"https://norkart.no\">Norkart AS</a>, where he is currently in charge of the research and development efforts on the Open AR-Cloud. He was part of the team which created the groundbreaking <a href=\"https://github.com/kartverket/BorderGo\">Border GO</a> prototype for the <a href=\"https://kartverket.no\">Norwegian Mapping Authority</a>. In the mid 90ties while still in his teens, he made the first computer-generated virtual studio backgrounds for broadcast TV in Norway from his bedroom. The pioneering experience of combining the real and the virtual over 20 years ago is mirrored by his current work on the Open AR-cloud.",
+            "email":"jan-erik.vinje@norkart.no"
+        },
+        {
+            "name":"Ori Inbar",
+            "title":"Advisor to Open-ARCloud, Founder at Super Ventures and AWE",
+            "img":"img/bio_ori_inbar.jpg",
+            "bio":"Ori is the world’s leading expert in augmented reality and has devoted the past 9 years to fostering the AR ecosystem. In 2009, Ori was the co-founder and CEO of Ogmento (now Flyby Media - Acquired by Apple), one of the first venture-backed companies conceived to develop and publish augmented reality games – games that are played in the real world. In 2012, Ori founded AugmentedReality.org, a non-profit organization on a mission to advance augmented reality in order to advance humanity. AugmentedReality.org has a moonshot goal to inspire 1 billion active users of augmented reality by 2020 and is the producing organization behind AWE, the world’s largest AR event in Silicon Valley and Asia. Ori is a recognized speaker in industry events and a sought-after advisor for AR initiatives. He is an advisor for Augary, Cimagine, Eyeway Vision, Fringefy, and is a board member for InfinityAR."
+        },
+        {
+            "name":"Christine Perey",
+            "title":"Advisor on AR standards and interoperability",
+            "img":"img/bio_christine.jpg",
+            "bio":"Christine Perey is an industry analyst and active leader of new technology industry initiatives. She was an early evangelist for use of streaming media and videoconferencing for 15 years until, in 2006, she began to study mobile Augmented Reality to increase operational efficiencies in business and enrich the lives of people. Her company provides services and programs for executives building and acquiring AR-enabling technologies as well as to the largest enterprise AR platform customers.<br>Christine has started and led many communities of interest. She is an advocate for interoperable Augmented Reality content and experiences, leads a grassroots community dedicated to this purpose and serves on numerous standards working groups. She is the founder and from 2013 to 2016 served as the founding executive director of the AR for Enterprise Alliance (AREA), the only global member-based organization accelerating AR adoption in enterprise.<br>When not traveling, Christine lives and works in Montreux, Switzerland.<br><a href=\"https://www.linkedin.com/in/christineperey/\">https://www.linkedin.com/in/christineperey/</a>"
+        },
+        {
+            "name":"Yohan Baillot",
+            "title":"Lead technology advisor",
+            "img":"img/bio_yohan.jpg",
+            "bio":"Yohan Baillot is a pioneer in a the field of Augmented Reality with 20 years experience in forward looking R&D in this field, mainly with the US Army and Navy and first responders, and more recently deploying this technology with the the emerging commercial and professional AR markets through various consulting appointments. In 2010 he created ARCortex a firm that is helping small and large emerging AR players to get quickly started with AR and build their initial prototype and team. He is the founder of the ARForum a discussion group on Augmented Reality and was general chair of the International Symposium of Mixed and Augmented Reality in 2004 in Washington DC. He received a MS in EE in 1996 from ISIM, France, and a MS in CS in 1999 from UCF, Florida. He is a member of the IEEE Computer Society. He has written more than 30 publications including 2 book chapters and 6 published patents."
+        },
+        {
+            "name":"Terje Midtbø",
+            "title":"Professor, NTNU",
+            "img":"img/bio_terje.jpg",
+            "bio":"Terje Midtbø is working with education and research within Geographical Information Science, and visualization/cartography in particular. In his work he has studied data structures for terrain modelling, methods for distribution of geographic information on the Internet, visualization of geographic temporal phenomena and how map animations can improve the communication of geographical information. Web based experiments have frequently been parts of the research. He has also been involved in research where low cost VR (Oculus Rift) has been used as means in cartographic research. He is the present Chair for the Norwegian Association for Geomatics (<a href=\"http://geoforum.no/\">GeoForum</a>)"
+        },
+        {
+            "name":"Anders Horne",
+            "title":"Lead developer, Pointmedia",
+            "img":"img/bio_anders.jpg",
+            "bio":"Anders Horne is currently the lead developer at Pointmedia AS, where he, among other things, works on the Holopipe-framework and .hologram format. Anders started out with creating small card games and board games in elementary school, and quickly moved to Flash and ActionScript in high school, and has been programming since then. He is building up Pixygon, a new way of creating games and experiences, where merging the virtual with reality is one of the main goals."
+        }
+    ],
+    "partners":[
+        {
+            "name":"Norkart AS",
+            "url":"https://norkart.no/",
+            "logo":"img/NORKART_LOGO.png"
+        },
+        {
+            "name":"NTNU - Norwegian University of Science and Technology",
+            "url":"https://www.ntnu.no/",
+            "logo":"img/NTNU-logo.svg"
+        },
+        {
+            "name":"Open Source Geospatial",
+            "url":"https://www.osgeo.org/",
+            "logo":"img/logo-osgeo.svg"
+        },
+        {
+            "name":"Pointmedia AS",
+            "url":"https://www.pointmedia.no/",
+            "logo":"img/pointmedia-logo.jpg"
+        }
+    ]
+}

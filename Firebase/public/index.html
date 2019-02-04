@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta id="random0567434535735754">
+    <meta license="LICENSE">     
+    <meta thirdpartylicenses="LICENSE-3RD-PARTY.txt">
+    <link rel="icon" type="image/png" href="img/favicon.png">  
+    <title>Welcome to the Open AR-Cloud</title>
+    <script src="lib/riot+compiler.min.js"></script>
+    <script src="lib/route.min.js"></script>
+    <script src="lib/markdown-it.min.js"></script>
+
+
+    <link rel="stylesheet"  href="style/style.css"></link>
+      
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-114935265-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-114935265-1');
+    </script>
+
+  </head>
+  <body>
+   
+    <app></app>
+    <script>
+      window.initialRoute = undefined;
+
+      route.start(true);
+      route.base('/');
+
+      let routeInit = (name)=>{
+        window.initialRoute = name;
+        console.log("initial route: " + name);
+      };
+
+      route('/#*', routeInit);
+      route('/*', routeInit);
+          
+    </script>
+    <script src="script/app.js"></script>
+    <script type="riot/tag" src="components/qanda.tag"></script>
+    <script type="riot/tag" src="components/faq.tag"></script>
+    <script type="riot/tag" src="components/raw.tag"></script>
+    <script type="riot/tag" src="components/bio.tag"></script>
+    <script type="riot/tag" src="components/partner.tag"></script>
+    <script type="riot/tag" src="components/team.tag"></script>
+    <script type="riot/tag" src="components/article.tag"></script>
+    <script type="riot/tag" src="components/blog.tag"></script>
+    <script type="riot/tag" src="app.tag"></script>
+    <script>
+        riot.mount('app');
+    </script>
+
+
+  </body>
+</html>

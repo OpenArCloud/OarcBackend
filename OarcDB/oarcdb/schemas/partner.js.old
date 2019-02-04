@@ -1,0 +1,28 @@
+export default {
+  name: 'partner',
+  title: 'Partner',
+  type: 'document',
+  fields: [
+      {
+          name: 'organization',
+          title: 'Organization/company',
+          type: 'organization'
+      },
+      {
+        name: 'endorsement',
+        title: 'Endorsment of OARC ',
+        type: 'text'
+      },
+      {
+        name: 'joinedate',
+        title: 'Partnership joined date ',
+        type: 'date'
+      },
+      {
+        name: 'founding',
+        title: 'Is a Founding Partner ',
+        type: 'boolean'
+      }
+
+  ]
+}

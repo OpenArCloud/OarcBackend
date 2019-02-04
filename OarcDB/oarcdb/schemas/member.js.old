@@ -1,0 +1,25 @@
+export default {
+    name: 'member',
+    title: 'Member',
+    type: 'document',
+    fields: [
+        {
+            name: 'person',
+            title: 'Person',
+            type: 'reference',
+            to: {type: 'person'}
+        },
+        {
+          name: 'joinedate',
+          title: 'Member joined date ',
+          type: 'date'
+        },
+        {
+          name: 'founding',
+          title: 'Is a Founding Member ',
+          type: 'boolean'
+        }
+  
+    ]
+  }
+  
