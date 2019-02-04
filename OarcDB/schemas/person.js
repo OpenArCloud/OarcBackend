@@ -12,6 +12,27 @@ export default {
         name: 'lastname',
         title: 'Last name',
         type: 'string'
+      },      
+      {
+        title: 'Year of birth',
+        name: 'yearofbirth',
+        type: 'number',
+        validation: Rule => Rule.min(1900).max(3000).integer().warning('Invalid year')
+      },
+      {
+        name: 'streetaddress',
+        title: 'Street address',
+        type: 'string'
+      },
+      {
+        name: 'city',
+        title: 'City',
+        type: 'string'
+      },
+      {
+        name: 'country',
+        title: 'Country',
+        type: 'string'
       },
       {
         name: 'roleortitle',
