@@ -37,7 +37,7 @@ export default {
             type: 'boolean'
         },
         {
-            name: 'lastpaymenttimestamp',
+            name: 'lastpaymentdate',
             title: 'When was last fee payment made?',
             type: 'date'
         }
