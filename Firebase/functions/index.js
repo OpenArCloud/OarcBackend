@@ -7,7 +7,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
 
     const sanityClient = require('@sanity/client')
     const client = sanityClient({
-      projectId: functions.config().sanity.projectId,
+      projectId: functions.config().sanity.projectid,
       dataset: functions.config().sanity.dataset,
       token: functions.config().sanity.token,
       useCdn: false // `false` if you want to ensure fresh data
