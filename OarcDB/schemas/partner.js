@@ -1,6 +1,6 @@
 export default {
-    name: 'organization',
-    title: 'Organization',
+    name: 'partner',
+    title: 'OARC partner',
     type: 'document',
     fields: [
       {
@@ -16,8 +16,17 @@ export default {
       {
           name: 'contactperson',
           title: 'Contact person',
-          type: 'reference',
-          to: {type: 'person'}
+          type: 'person'
+      },
+      {
+        name: 'alternatecontact',
+        title: 'Alternate contact person',
+        type: 'person'
+      },
+      {
+        name: 'financialcontact',
+        title: 'Financial contact person',
+        type: 'person'
       },
       {
         name: 'logo',
@@ -25,11 +34,11 @@ export default {
         type: 'image'
       },
       {
-        name: 'attributes',
-        title: 'Organization is',
-        type: 'array',
-        of: [{type: 'reference', to: {type: 'organizationattribute'}}]
+        name: 'founding',
+        title: 'Is a Founding Partner ',
+        type: 'boolean'
       },
+
       {
         name: 'endorsement',
         title: 'Endorsment of OARC ',

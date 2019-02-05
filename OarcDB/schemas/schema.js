@@ -11,13 +11,12 @@ import schemaTypes from 'all:part:@sanity/base/schema-type'
 //import author from './author'
 import person from './person'
 import member from './member'
-import personattribute from './personattribute'
-import organization from './organization'
+import partner from './partner'
 //import partner from './partner'
 //import member from './member'
 import wgc from './wgc'
 import workinggroup from './workinggroup'
-import organizationattribute from './organizationattribute'
+//import organizationattribute from './organizationattribute'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -33,9 +32,8 @@ export default createSchema({
     //category,
     person,
     member,
-    personattribute,
-    organization,
-    organizationattribute,
+    partner,
+    //organizationattribute,
     //member,
     wgc,
     workinggroup,

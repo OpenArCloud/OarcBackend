@@ -22,7 +22,7 @@ export default {
             type:'person'
         },
         {
-            name: 'membersincedate',
+            name: 'membershipstartdate',
             title: 'Date when person became member',
             type: 'date'
         },
