@@ -10,10 +10,12 @@ import schemaTypes from 'all:part:@sanity/base/schema-type'
 //import post from './post'
 //import author from './author'
 import person from './person'
+import member from './member'
 import personattribute from './personattribute'
 import organization from './organization'
 //import partner from './partner'
 //import member from './member'
+import wgc from './wgc'
 import workinggroup from './workinggroup'
 import organizationattribute from './organizationattribute'
 
@@ -30,10 +32,12 @@ export default createSchema({
     //author,
     //category,
     person,
+    member,
     personattribute,
     organization,
     organizationattribute,
     //member,
+    wgc,
     workinggroup,
  
     // When added to this list, object types can be used as

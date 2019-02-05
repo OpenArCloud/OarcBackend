@@ -1,7 +1,7 @@
 export default {
     name: 'person',
     title: 'Person',
-    type: 'object',
+    type: 'document',
     fields: [
       {
         name: 'firstname',
@@ -20,18 +20,8 @@ export default {
         validation: Rule => Rule.min(1900).max(3000).integer().warning('Invalid year')
       },
       {
-        name: 'portrait',
-        title: 'Portrait picture',
-        type: 'image'
-      },
-      {
         name: 'streetaddress',
         title: 'Street address',
-        type: 'string'
-      },
-      {
-        name: 'postcodeorzip',
-        title: 'Postcode / ZIP',
         type: 'string'
       },
       {
@@ -45,8 +35,8 @@ export default {
         type: 'string'
       },
       {
-        name: 'jobtitlorrole',
-        title: 'Job title or role',
+        name: 'roleortitle',
+        title: 'Title or role',
         type: 'string'
       },
       {
@@ -56,13 +46,19 @@ export default {
       },
       {
         name: 'organizations',
-        title: 'Organization / Workplace',
-        type: 'string'
-      }
+        title: 'Organizations',
+        type: 'array',
+        of: [{type: 'reference', to: {type: 'organization'}}]
+      },
+      {
+        name: 'attributes',
+        title: 'Person is',
+        type: 'array',
+        of: [{type: 'reference', to: {type: 'personattribute'}}]
+      },
     ],
     preview: {
       select: {
-        media: 'portrait',
         title: 'firstname',
         subtitle: 'lastname'
       }
