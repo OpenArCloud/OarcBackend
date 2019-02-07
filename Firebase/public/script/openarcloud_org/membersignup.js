@@ -221,8 +221,8 @@ oarc.enableSignup = ()=>{
 };
 
 
-oarc.addCountries('country');
-let formFields = oarc.getFormFields();
-oarc.enableSignup();
+//oarc.addCountries('country');
+//let formFields = oarc.getFormFields();
+//oarc.enableSignup();
 
 
