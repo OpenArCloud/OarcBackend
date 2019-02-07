@@ -45,7 +45,7 @@ export default {
         type: 'string'
       },
       {
-        name: 'jobtitlorrole',
+        name: 'jobtitleorrole',
         title: 'Job title or role',
         type: 'string'
       },

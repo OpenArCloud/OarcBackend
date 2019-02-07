@@ -40,6 +40,11 @@ export default {
             name: 'lastpaymentdate',
             title: 'When was last fee payment made?',
             type: 'date'
+        },
+        {
+            name: 'approved',
+            title: 'OARC has approved this membership',
+            type: 'boolean'
         }
 
     ],
