@@ -34,6 +34,10 @@ function addCountries(whereto) {
   }
 };
 
+// payment template
+
+
+
 addCountries('country');
   
 let formFieldIds = ["member_type_pro","member_type_other","first-name","last-name", "birthyear", "address","postcode_or_zip", "city","country", "email","password","organization","jobtitle","linkedin","accept_memberterms","accept_ip_bylaws"]
@@ -122,6 +126,7 @@ signupBtn.onclick = (e) => {
             emailVerified = true;
             confirmationstep.style.display = 'none';
             paymentstep.style.display = 'block';
+            enablePayment();
             console.log("email was verified!");
             // show email verified - proceed to payment
           } else {
@@ -199,6 +204,35 @@ signupBtn.onclick = (e) => {
   }
 
 }
+
+let useStripeCard = (usdAmount, feeType, container)=>{
+
+  let stripeCardTemplate = `<form action="your-server-side-code" method="POST">
+        <script
+          src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+          data-key="pk_test_TYooMQauvdEDq54NiTphI7jx"
+          data-amount="${usdAmoun*100}"
+          data-name="Stripe.com"
+          data-description="${feeType}"
+          data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+          data-locale="auto"
+          data-zip-code="true">
+        </script>
+      </form>`
+
+      container.innerHTML = stripeCardTemplate;
+};
+
+let enablePayments = ()=>{
+
+
+  let paymentarea = document.getElementById('paymentarea');
+  
+  let paycardbtn = document.getElementById('paycardbtn');
+  paycardbtn.onclick = ()=>{useStripeCard(1,"membership_fee", paymentarea)};
+
+
+};
   
 
 </script>
