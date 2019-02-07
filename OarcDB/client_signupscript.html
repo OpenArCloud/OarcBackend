@@ -60,6 +60,9 @@ signupBtn.onclick = (e) => {
   if(isOk){
     console.log("ready to submit data");
     // do the stuff!
+    let spinner = document.getElementById('spinner');
+    spinner.style.display='inline-block';
+
     if(firebase){
       let email = document.getElementById("email").value;
       let password = document.getElementById("password").value;
@@ -125,12 +128,12 @@ signupBtn.onclick = (e) => {
             retries --;
             if(retries >0){
               console.log("Check again! remaining retries: "+retries );
-              console.log(user);
+     
               setTimeout(checkVerified, interval) ;
             } else {
               // display check again button ?
               console.log("No remaining retries " );
-              console.log(user);
+
             }
         }
       }).catch((err)=>{console.log(err)});
@@ -171,6 +174,7 @@ signupBtn.onclick = (e) => {
             }).catch((err)=>{
               let  signgupformerror = document.getElementById('signgupformerror');
               signgupformerror.style.display = "block";
+              spinner.style.display='none';
             });
 
           }
@@ -180,6 +184,7 @@ signupBtn.onclick = (e) => {
           // Handle Errors here.
           var errorCode = error.code;
           var errorMessage = error.message;
+          spinner.style.display='none';
           if (errorCode == 'auth/weak-password') {
             alert('The password is too weak.');
           } else {
