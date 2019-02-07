@@ -71,6 +71,7 @@ oarc.enableSignup = ()=>{
             membertype: membertype,
             personal_details : {
             city:document.getElementById("city").value,
+            country:document.getElementById("country").value,
             firstname: document.getElementById("first-name").value,
             lastname: document.getElementById("last-name").value,
             yearofbirth: parseInt(document.getElementById("birthyear").value),
