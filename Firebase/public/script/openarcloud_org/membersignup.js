@@ -111,7 +111,7 @@ oarc.enableSignup = ()=>{
                 emailVerified = true;
                 confirmationstep.style.display = 'none';
                 paymentstep.style.display = 'block';
-                enablePayment();
+                enablePayments();
                 console.log("email was verified!");
                 // show email verified - proceed to payment
             } else {
@@ -209,14 +209,9 @@ oarc.enableSignup = ()=>{
     };
 
     let enablePayments = ()=>{
-
-
-    let paymentarea = document.getElementById('paymentarea');
-    
-    let paycardbtn = document.getElementById('paycardbtn');
-    paycardbtn.onclick = ()=>{useStripeCard(1,"membership_fee", paymentarea)};
-
-
+        let paymentarea = document.getElementById('paymentarea');
+        let paycardbtn = document.getElementById('paycardbtn');
+        paycardbtn.onclick = ()=>{useStripeCard(1,"membership_fee", paymentarea)};
     };
 };
 
