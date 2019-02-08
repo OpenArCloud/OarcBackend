@@ -221,7 +221,7 @@ oarc.enableSignup = ()=>{
         paycardbtn.onclick = ()=>{
             useStripeCard(paymentarea);
             //var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
-            var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+            var stripe = Stripe('sk_test_b1TvqWzZV8A191qCQgP90cUx');
             var elements = stripe.elements();
             // Custom styling can be passed to options when creating an Element.
             // (Note that this demo uses a wider set of styles than the guide below.)
