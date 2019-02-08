@@ -279,7 +279,7 @@ oarc.enableSignup = ()=>{
                             token:result.token,
                             timestamp:Date.now()
                         }
-                        let path = '/members/'+user.uid+'}/payment_info';
+                        let path = '/members/'+user.uid+'/payment_info';
                         firebase.database().ref(path).update(payment_info).then((res)=>{
                             (error) =>{
                                 if (error) {
