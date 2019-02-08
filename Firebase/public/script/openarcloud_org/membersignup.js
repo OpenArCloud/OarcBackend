@@ -286,7 +286,7 @@ oarc.enableSignup = ()=>{
                                     console.log("failed to submit payment data");
                                 } else {
                                     // Data saved successfully!
-                                    console.log("payment was made");
+                                    console.log("payment details submitted");
                                 }
                             }
                         })
@@ -295,7 +295,7 @@ oarc.enableSignup = ()=>{
             });
 
 
-    };
+        };
     };
 }
 
