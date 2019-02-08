@@ -272,15 +272,14 @@ oarc.enableSignup = ()=>{
                         // Send the token to your server.
                         //stripeTokenHandler(result.token);
            
-                        console.log("payment complete!")
+                        console.log("Card details accepted.");
                         let user = firebase.auth().currentUser;
                         let payment_info = {
                             token:result.token,
                             timestamp:Date.now()
                         }
                         let path = '/members/'+user.uid+'/payment_info';
-                        firebase.database().ref(path).update(payment_info).then((res)=>{
-                            (error) =>{
+                        firebase.database().ref(path).update(payment_info).then((error) =>{
                                 if (error) {
                                     // The write failed...
                                     console.log("failed to submit payment data");
@@ -288,8 +287,8 @@ oarc.enableSignup = ()=>{
                                     // Data saved successfully!
                                     console.log("payment details submitted");
                                 }
-                            }
-                        })
+                        });
+                        
                     }
                 });
             });
