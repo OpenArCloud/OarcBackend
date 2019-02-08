@@ -13,7 +13,7 @@ let oarc = {};
   
     for(var c = 0; c<countries.length; c++) {
       var option = document.createElement("option");
-      option.value = countries[c];
+      option.value = countries[c].trim();
       option.innerHTML  = countries[c];
       select.append(option);
       //$(whereto).append('<option value="' + countries[c] + '">' + countries[c] + '</option>');
@@ -38,172 +38,172 @@ oarc.enableSignup = ()=>{
     let signupBtn = document.querySelector("#member_signup_gopay");
 
     signupBtn.onclick = (e) => {
-    let isOk = true;
-    formFields.forEach((el)=>{
-        if(!el.checkValidity()){
-        isOk = false;
-        el.reportValidity();
-        }
+        let isOk = true;
+        
+        formFields.forEach((el)=>{
+            if(!el.checkValidity()){
+                isOk = false;
+                el.reportValidity();
+            }
         });
     
-    if(isOk){
-        console.log("ready to submit data");
-        // do the stuff!
-        let spinner = document.getElementById('spinner');
-        spinner.style.display='inline-block';
+        if(isOk){
+            console.log("ready to submit data");
+            let spinner = document.getElementById('spinner');
+            spinner.style.display='inline-block';
 
-        if(firebase){
-        let email = document.getElementById("email").value;
-        let password = document.getElementById("password").value;
-        firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(email, password).then((res) =>{
-        
-        //console.log(res);
-        // ready to update member
-        
-        let postcode_or_zip = document.getElementById("postcode_or_zip")? document.getElementById("postcode_or_zip").value : undefined;
-        let jobtitle = document.getElementById("jobtitle") ? document.getElementById("jobtitle").value : undefined;
-        let linkedin = document.getElementById("linkedin") ? document.getElementById("linkedin").value : undefined;
-        let membertype = document.getElementById("member_type_pro").checked ? "professional" : "studentparttimeother";
-        let organizations = document.getElementById("organization") ? document.getElementById("organization").value : undefined;
-        
-
-        let member = {
-            membertype: membertype,
-            personal_details : {
-            city:document.getElementById("city").value,
-            country:document.getElementById("country").value,
-            firstname: document.getElementById("first-name").value,
-            lastname: document.getElementById("last-name").value,
-            yearofbirth: parseInt(document.getElementById("birthyear").value),
-            streetaddress: document.getElementById("address").value,
-            email: document.getElementById("email").value,
-            linkedin: linkedin,
-            postcodeorzip: postcode_or_zip,
-            organizations: organizations,
-            jobtitleorrole: jobtitle
+            // CREATE ONLINE USER
+            if(firebase){
+                let email = document.getElementById("email").value;
+                let password = document.getElementById("password").value;
+                firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(email, password).then((res) =>{
+                
             
+                    // PREPARE MEMBER DETAILS
+                    let postcode_or_zip = document.getElementById("postcode_or_zip")? document.getElementById("postcode_or_zip").value : undefined;
+                    let jobtitle = document.getElementById("jobtitle") ? document.getElementById("jobtitle").value : undefined;
+                    let linkedin = document.getElementById("linkedin") ? document.getElementById("linkedin").value : undefined;
+                    let membertype = document.getElementById("member_type_pro").checked ? "professional" : "studentparttimeother";
+                    let organizations = document.getElementById("organization") ? document.getElementById("organization").value : undefined;
+                    
+                    
+                    let uid = res.user.uid;
+                    
+                    let personal_details = {
+                        city:document.getElementById("city").value,
+                        country:document.getElementById("country").value,
+                        firstname: document.getElementById("first-name").value,
+                        lastname: document.getElementById("last-name").value,
+                        yearofbirth: parseInt(document.getElementById("birthyear").value),
+                        streetaddress: document.getElementById("address").value,
+                        email: document.getElementById("email").value,
+                        linkedin: linkedin,
+                        postcodeorzip: postcode_or_zip,
+                        organizations: organizations,
+                        jobtitleorrole: jobtitle
+                    };    
+
+                    let memberUpdate ={}
+                    memberUpdate['members/'+uid+'/membertype'] = membertype;
+                    memberUpdate['members/'+uid+'/personal_details'] =personal_details; 
+
+
+                    let signgupform = document.getElementById('signupform');
+
+                    // confirmation step elements
+                    let confirmationstep= document.getElementById('confirmationstep');
+
+
+                
+
+                    // FIREBASE MEMBER UPDATE
+                    firebase.database().ref().update(memberUpdate,
+                        (error) =>{
+                            if (error) {
+                                // The write failed...
+                                console.log("failed to save top-level member data");
+                            } else {
+                                // Data saved successfully!
+                                console.log("successfully saved top-level member data!");
+                                
+                                let user = firebase.auth().currentUser;
+                                // listen to email verification
+                                
+                                // send emailverification
+                                user.sendEmailVerification().then(()=>{
+                                console.log("Sendt email verification email!");
+                                console.log("waiting for confirmation");
+                                signgupform.style.display = 'none';
+                                confirmationstep.style.display = 'block';
+                                setTimeout(checkVerified, interval);
+
+                                }).catch((err)=>{
+                                let  signgupformerror = document.getElementById('signgupformerror');
+                                signgupformerror.style.display = "block";
+                                spinner.style.display='none';
+                                });
+
+                            }
+                        }
+                    );
+                
+                }).catch(function(error) { // catch firebase member creation error
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    spinner.style.display='none';
+                    if (errorCode == 'auth/weak-password') {
+                        alert('The password is too weak.');
+                    } else {
+                        alert(errorMessage);
+                    }
+                    console.log(error);
+                });
             }
-        };
-
         
-        let uid = res.user.uid;
-    
-        let signgupform = document.getElementById('signupform');
+        } else {
+            // form wasn not validated
+            console.log("form is not valid");
+        }
 
-        // confirmation step elements
-        let confirmationstep= document.getElementById('confirmationstep');
-        let confirmationinfo = document.getElementById('confirmationinfo');
-        let confirmationinfoheading = document.getElementById('confirmationinfoheading');
-        let resendconfirmationbtn = document.getElementById('confirmationinfoheading');
-        let emailVerified = false;
-        let retries = 50;
-        let interval = 3000;
-
-        // payment step elements
-
-        let paymentstep = document.getElementById('paymentstep');
-
-
+        // EMAIL VERIFICATION
         let checkVerified = ()=>{
             let user = firebase.auth().currentUser;
             user.reload().then((x)=>{
             
-            if(user.emailVerified){
-                emailVerified = true;
-                confirmationstep.style.display = 'none';
-                paymentstep.style.display = 'block';
-                enablePayments();
-                console.log("email was verified!");
-                // show email verified - proceed to payment
-            } else {
-                retries --;
-                if(retries >0){
-                console.log("Check again! remaining retries: "+retries );
-        
-                setTimeout(checkVerified, interval) ;
+                if(user.emailVerified){
+                    emailVerified = true;
+                    confirmationstep.style.display = 'none';
+                    paymentstep.style.display = 'block';
+                    enablePayments();
+                    console.log("email was verified!");
+                    // show email verified - proceed to payment
                 } else {
-                // display check again button ?
-                console.log("No remaining retries " );
+                    retries --;
+                    if(retries >0){
+                    console.log("Check again! remaining retries: "+retries );
+            
+                    setTimeout(checkVerified, interval) ;
+                    } else {
+                    // display check again button ?
+                    console.log("No remaining retries " );
 
+                    }
                 }
-            }
-        }).catch((err)=>{console.log(err)});
-        }
+        }).catch((err)=>{
+            console.log(err)
+        });
+    }
 
-
-
-        let sendConfirmationEmail = ()=>{
-            let user = firebase.auth().currentUser;
-                user.sendEmailVerification().then(()=>{
-                retries = 50;
-                setTimeout(checkVerified, interval);
-                }).catch((err)=>{
-                });
-        }
-
-        
-        firebase.database().ref('members/'+uid).update(member,
-            (error) =>{
-            if (error) {
-                // The write failed...
-                console.log("failed to save top-level member data");
-            } else {
-                // Data saved successfully!
-                console.log("successfully saved top-level member data!");
-                
-                let user = firebase.auth().currentUser;
-                // listen to email verification
-                
-                // send emailverification
-                user.sendEmailVerification().then(()=>{
-                console.log("Sendt email verification email!");
-                console.log("waiting for confirmation");
-                signgupform.style.display = 'none';
-                confirmationstep.style.display = 'block';
-                setTimeout(checkVerified, interval);
-
-                }).catch((err)=>{
-                let  signgupformerror = document.getElementById('signgupformerror');
-                signgupformerror.style.display = "block";
-                spinner.style.display='none';
-                });
-
-            }
+    
+    
+    let sendConfirmationEmail = ()=>{
+        let user = firebase.auth().currentUser;
+            user.sendEmailVerification().then(()=>{
+            retries = 50;
+            setTimeout(checkVerified, interval);
+            }).catch((err)=>{
             });
-        
-        }).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            spinner.style.display='none';
-            if (errorCode == 'auth/weak-password') {
-                alert('The password is too weak.');
-            } else {
-                alert(errorMessage);
-            }
-            console.log(error);
-            });
-        }
-        
-    } else {
-        console.log("form is not valid");
     }
 
     }
 
     let useStripeCard = (usdAmount, feeType, container)=>{
 
-    let stripeCardTemplate = `<form action="your-server-side-code" method="POST">
-            <script
-            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-            data-key="pk_test_TYooMQauvdEDq54NiTphI7jx"
-            data-amount="${usdAmount*100}"
-            data-name="Stripe.com"
-            data-description="${feeType}"
-            data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-            data-locale="auto"
-            data-zip-code="true">
-            </script>
+    let stripeCardTemplate = `<form action="/charge" method="post" id="payment-form">
+            <div class="form-row">
+            <label for="card-element">
+                Credit or debit card
+            </label>
+            <div id="card-element">
+                <!-- A Stripe Element will be inserted here. -->
+            </div>
+        
+            <!-- Used to display form errors. -->
+            <div id="card-errors" role="alert"></div>
+            </div>
+        
+            <button>Submit Payment</button>
         </form>`
 
         container.innerHTML = stripeCardTemplate;
@@ -212,7 +212,82 @@ oarc.enableSignup = ()=>{
     let enablePayments = ()=>{
         let paymentarea = document.getElementById('paymentarea');
         let paycardbtn = document.getElementById('paycardbtn');
-        paycardbtn.onclick = ()=>{useStripeCard(1,"membership_fee", paymentarea)};
+        paycardbtn.onclick = ()=>{
+            useStripeCard(1,"membership_fee", paymentarea);
+            var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+            var elements = stripe.elements();
+            // Custom styling can be passed to options when creating an Element.
+            // (Note that this demo uses a wider set of styles than the guide below.)
+            var style = {
+                base: {
+                color: '#32325d',
+                lineHeight: '18px',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+                },
+                invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+                }
+            };
+
+            // Create an instance of the card Element.
+            var card = elements.create('card', {style: style});
+            };
+
+            // Add an instance of the card Element into the `card-element` <div>.
+            card.mount('#card-element');
+
+            // Handle real-time validation errors from the card Element.
+            card.addEventListener('change', function(event) {
+                var displayError = document.getElementById('card-errors');
+                if (event.error) {
+                displayError.textContent = event.error.message;
+                } else {
+                displayError.textContent = '';
+                }
+            });
+
+            // Handle form submission.
+            var form = document.getElementById('payment-form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                stripe.createToken(card).then(function(result) {
+                    if (result.error) {
+                        // Inform the user if there was an error.
+                        var errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                    } else {
+                        // Send the token to your server.
+                        //stripeTokenHandler(result.token);
+                        let paymentDetails = {}
+
+                        let user = firebase.auth().currentUser;
+                        let payment_info = {
+                            token:result.token,
+                            timestamp:Date.now()
+                        }
+                        let path = '/member/'+user.uid+'}/payment_info';
+                        firebase.database().ref(path).update(payment_info).then((res)=>{
+                            (error) =>{
+                                if (error) {
+                                    // The write failed...
+                                    console.log("failed to submit payment data");
+                                } else {
+                                    // Data saved successfully!
+                                    console.log("payment was made");
+                                }
+                            }
+                        })
+                    }
+                });
+            });
+
+
     };
 };
 
