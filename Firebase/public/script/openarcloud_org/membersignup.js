@@ -153,8 +153,9 @@ oarc.enableSignup = ()=>{
         // EMAIL VERIFICATION
         let checkVerified = ()=>{
             let user = firebase.auth().currentUser;
-            user.reload().then((x)=>{
-            
+            user.reload().then(()=>{
+                console.log("reloaded user:");
+                console.log(user);
                 if(user.emailVerified){
                     emailVerified = true;
                     confirmationstep.style.display = 'none';
@@ -192,7 +193,7 @@ oarc.enableSignup = ()=>{
 
     }
 
-    let useStripeCard = (usdAmount, feeType, container)=>{
+    let useStripeCard = ( container)=>{
 
     let stripeCardTemplate = `<form action="/charge" method="post" id="payment-form">
             <div class="form-row">
@@ -213,11 +214,13 @@ oarc.enableSignup = ()=>{
         container.innerHTML = stripeCardTemplate;
     };
 
+    
+
     let enablePayments = ()=>{
         let paymentarea = document.getElementById('paymentarea');
         let paycardbtn = document.getElementById('paycardbtn');
         paycardbtn.onclick = ()=>{
-            useStripeCard(1,"membership_fee", paymentarea);
+            useStripeCard(paymentarea);
             //var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
             var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
             var elements = stripe.elements();
@@ -242,7 +245,7 @@ oarc.enableSignup = ()=>{
 
             // Create an instance of the card Element.
             var card = elements.create('card', {style: style});
-            };
+            
 
             // Add an instance of the card Element into the `card-element` <div>.
             card.mount('#card-element');
