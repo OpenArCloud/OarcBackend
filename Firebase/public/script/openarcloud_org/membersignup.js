@@ -36,7 +36,8 @@ oarc.getFormFields = ()=>{
 oarc.enableSignup = ()=>{
     // MEMBER SIGNUP
     let signupBtn = document.querySelector("#member_signup_gopay");
-
+    let interval = 3000; // retry interval for the email verification
+    let retries = 60 // number of times to  retry email verification check
     signupBtn.onclick = (e) => {
         let isOk = true;
         
