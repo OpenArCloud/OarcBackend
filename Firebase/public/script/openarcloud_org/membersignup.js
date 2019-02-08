@@ -272,14 +272,14 @@ oarc.enableSignup = ()=>{
                     } else {
                         // Send the token to your server.
                         //stripeTokenHandler(result.token);
-                        let paymentDetails = {}
-
+           
+                        console.log("payment complete!")
                         let user = firebase.auth().currentUser;
                         let payment_info = {
                             token:result.token,
                             timestamp:Date.now()
                         }
-                        let path = '/member/'+user.uid+'}/payment_info';
+                        let path = '/members/'+user.uid+'}/payment_info';
                         firebase.database().ref(path).update(payment_info).then((res)=>{
                             (error) =>{
                                 if (error) {
