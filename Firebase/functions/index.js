@@ -138,3 +138,48 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
       // });
 
   });
+
+  // exports.createStripeCharge = functions.https.onRequest((req, res) => {
+  //   console.log(req.body);        
+  //   var stripe = require("stripe")("sk_test_b1TvqWzZV8A191qCQgP90cUx");    
+
+  //   (async () => {
+  //     const charge = await stripe.charges.create({
+  //       amount: 999,
+  //       currency: 'usd',
+  //       source: 'tok_visa',
+  //       receipt_email: 'nouman.hanif@hotmail.com',
+  //     });
+
+  //     console.log('Charge created: ', charge);
+  //     res.status(200).send({ok: true, msg: charge});
+  //   })().catch(err => {
+  //     console.log('Error: ', err);
+  //     res.status(400).send({ok: false, msg: err});
+  //   });        
+  // });
+
+  exports.createStripeCharge = functions.database.ref('/members/{uid}/payment_info')
+  .onUpdate((change, context) => {    
+
+    var stripe = require("stripe")(functions.config().stripe.key);    
+    const payment_info = change.after.val();
+    
+    (async () => {
+      const charge = await stripe.charges.create({
+        amount: 999,
+        currency: functions.config().stripe.currency,
+        source: 'tok_visa',
+        receipt_email: context.params.email,
+      });
+
+      if(charge) {
+        console.log('Charge created: ', charge);
+        return {ok: true, msg: charge};  
+      }
+      return {ok: false, msg: 'unknown error'};  
+    })().catch(err => {
+      console.log('Error: ', err);
+      return {ok: false, msg: err};
+    });        
+  });
