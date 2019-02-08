@@ -297,7 +297,8 @@ oarc.enableSignup = ()=>{
 
 
     };
-};
+    };
+}
 
 
 //oarc.addCountries('country');
