@@ -92,8 +92,8 @@ oarc.enableSignup = ()=>{
 
                     // confirmation step elements
                     let confirmationstep= document.getElementById('confirmationstep');
-
-
+                    let emailverificationerror = document.getElementById('emailverificationerror');
+                    let emailverificationerrormessage = document.getElementById('emailverificationerrormessage');
                 
 
                     // FIREBASE MEMBER UPDATE
@@ -111,16 +111,19 @@ oarc.enableSignup = ()=>{
                                 
                                 // send emailverification
                                 user.sendEmailVerification().then(()=>{
-                                console.log("Sendt email verification email!");
-                                console.log("waiting for confirmation");
-                                signgupform.style.display = 'none';
-                                confirmationstep.style.display = 'block';
-                                setTimeout(checkVerified, interval);
+                                    console.log("Sendt email verification email!");
+                                    console.log("waiting for confirmation");
+                                    signgupform.style.display = 'none';
+                                    confirmationstep.style.display = 'block';
+                                    setTimeout(checkVerified, interval);
 
                                 }).catch((err)=>{
-                                let  signgupformerror = document.getElementById('signgupformerror');
-                                signgupformerror.style.display = "block";
-                                spinner.style.display='none';
+                                    console.log(err);
+                                    
+                                    emailverificationerror.style.display = 'block'
+                                    emailverificationerrormessage.innerHTML = "There was an error: Email verification has not been sent! You could try again"
+                                    
+                                    spinner.style.display='none';
                                 });
 
                             }
@@ -179,11 +182,11 @@ oarc.enableSignup = ()=>{
     
     let sendConfirmationEmail = ()=>{
         let user = firebase.auth().currentUser;
-            user.sendEmailVerification().then(()=>{
+        user.sendEmailVerification().then(()=>{
             retries = 50;
             setTimeout(checkVerified, interval);
-            }).catch((err)=>{
-            });
+        }).catch((err)=>{
+        });
     }
 
     }
