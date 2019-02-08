@@ -214,6 +214,7 @@ oarc.enableSignup = ()=>{
         let paycardbtn = document.getElementById('paycardbtn');
         paycardbtn.onclick = ()=>{
             useStripeCard(1,"membership_fee", paymentarea);
+            //var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
             var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
             var elements = stripe.elements();
             // Custom styling can be passed to options when creating an Element.
