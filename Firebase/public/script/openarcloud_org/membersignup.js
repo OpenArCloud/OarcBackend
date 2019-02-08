@@ -155,7 +155,6 @@ oarc.enableSignup = ()=>{
             let user = firebase.auth().currentUser;
             user.reload().then(()=>{
                 console.log("reloaded user:");
-                console.log(user);
                 if(user.emailVerified){
                     emailVerified = true;
                     confirmationstep.style.display = 'none';
