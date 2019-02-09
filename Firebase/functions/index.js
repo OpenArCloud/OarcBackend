@@ -160,26 +160,29 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
   // });
 
   exports.createStripeCharge = functions.database.ref('/members/{uid}/payment_info')
-  .onUpdate((change, context) => {    
+  .onWrite((change, context) => {    
 
     var stripe = require("stripe")(functions.config().stripe.key);    
     const payment_info = change.after.val();
-    
-    (async () => {
-      const charge = await stripe.charges.create({
+    console.log('token', payment_info.token.id);
+    //console.log('email', context.params.email);
+    return new Promise((resolve, reject) => {
+      stripe.charges.create({
         amount: 999,
         currency: functions.config().stripe.currency,
-        source: 'tok_visa',
-        receipt_email: context.params.email,
-      });
-
-      if(charge) {
-        console.log('Charge created: ', charge);
-        return {ok: true, msg: charge};  
-      }
-      return {ok: false, msg: 'unknown error'};  
-    })().catch(err => {
-      console.log('Error: ', err);
-      return {ok: false, msg: err};
-    });        
-  });
+        source: payment_info.token.id,
+        receipt_email: 'nouman@sitelens.io',
+      }, (err, charge) => {
+        if(charge) {
+          console.log('Charge created: ', charge);
+          resolve({ok: true, msg: charge});  
+        }
+        console.log('Error: ', err);
+        reject(err);    
+      });  
+  
+    }).catch(err=>{
+      console.log('Error catch: ', err);
+      return err;
+    });
+});
