@@ -54,7 +54,8 @@ oarc.enableSignup = ()=>{
     if(window.localStorage){
         console.log("checks local storage");
         let storage = window.localStorage;
-        oarc.signupState = storage.getItem('signupState');
+        let s = storage.getItem('signupState');
+        oarc.signupState =  s ? s : oarc.signupState ; 
         if(oarc.signupState){
             console.log("found previous state");
             let st = JSON.parse(oarc.signupState);
