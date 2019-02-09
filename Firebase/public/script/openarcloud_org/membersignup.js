@@ -55,9 +55,9 @@ oarc.enableSignup = ()=>{
         console.log("checks local storage");
         let storage = window.localStorage;
         oarc.signupState = storage.getItem('signupState');
-        if(signupState){
+        if(oarc.signupState){
             console.log("found previous state");
-            let st = JSON.parse(signupState);
+            let st = JSON.parse(oarc.signupState);
             console.log(st);
             
             // set field values from "cache"
