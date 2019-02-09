@@ -159,6 +159,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
   //   });        
   // });
 
+
   exports.createStripeCharge = functions.database.ref('/members/{uid}/payment_info')
   .onUpdate((change, context) => {    
 
@@ -183,3 +184,27 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
       return {ok: false, msg: err};
     });        
   });
+
+  // endpoint for email subscription
+  exports.subscribeToEmailUpdates = functions.https.onRequest((req, res) => {
+     console.log(req.params);  
+     const sanityClient = require('@sanity/client');
+     const client = sanityClient({
+       projectId: functions.config().sanity.projectid,
+       dataset: functions.config().sanity.dataset,
+       token: functions.config().sanity.token,
+       useCdn: false // `false` if you want to ensure fresh data
+     });    
+     const dtIsoString = new Date().toISOString();
+     const doc = {
+
+            _createdAt: dtIsoString,
+            _type: 'emailsubscriber',
+            
+              email: req.params.email,
+              utctimestamp: req.params.timestamp             
+                      
+      };       
+      return client.createOrReplace(doc);  
+       
+   });
