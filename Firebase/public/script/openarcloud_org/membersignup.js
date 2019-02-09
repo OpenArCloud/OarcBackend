@@ -21,34 +21,76 @@ let oarc = {};
   }
 };
 
+oarc.signupState = {};
+
+oarc.blurFunc = (e)=>{
+    if(window.localStorage){ // no need to do anything without ls
+        if(e && e.srcElement){
+            let el = e.srcElement
+            oarc.signupState[el.id] = el.value;
+            let storage = window.localStorage;
+            storage.set('signupState', JSON.stringify(oarc.signupState));// store updated value
+        }  
+    }
+}
 
 oarc.getFormFields = ()=>{
     let formFieldIds = ["member_type_pro","member_type_other","first-name","last-name", "birthyear", "address","postcode_or_zip", "city","country", "email","password","organization","jobtitle","linkedin","accept_memberterms","accept_ip_bylaws"]
-  
     return formFieldIds.map((id)=>{
-          return document.getElementById(id);
+        let el = document.getElementById(id);
+        el.addEventListener('blur', oarc.blurFunc); // ensures we can save changes to all our formfields
+        return el;
     });
-  };
+};
 
 
 
 
 oarc.enableSignup = ()=>{
+
+    let formFields = oarc.getFormFields();
+
+    // Check state cache
+    if(window.localStorage){
+        console.log("checks local storage");
+        let storage = window.localStorage;
+        oarc.signupState = storage.getItem('signupState');
+        if(signupState){
+            console.log("found previous state");
+            let st = JSON.parse(signupState);
+            console.log(st);
+            
+            // set field values from "cache"
+            formFields.forEach((field)=>{
+                field.val = st[field.id]
+            });
+
+
+        }
+    }
+
+
     // MEMBER SIGNUP
     let signupBtn = document.querySelector("#member_signup_gopay");
     let interval = 3000; // retry interval for the email verification
     let retries = 60 // number of times to  retry email verification check
+    
+    
+    
+    
     signupBtn.onclick = (e) => {
         let isOk = true;
         
-        formFields.forEach((el)=>{
-            if(!el.checkValidity()){
-                isOk = false;
-                el.reportValidity();
-            }
-        });
+        
     
         if(isOk){
+            // first store the fields in the cache
+            if(window.localStorage){
+                console.log("checks local storage");
+                let storage = window.localStorage;
+            }
+
+
             console.log("ready to submit data");
             let spinner = document.getElementById('spinner');
             spinner.style.display='inline-block';
@@ -300,6 +342,7 @@ oarc.enableSignup = ()=>{
 
 
 //oarc.addCountries('country');
+
 //let formFields = oarc.getFormFields();
 //oarc.enableSignup();
 
