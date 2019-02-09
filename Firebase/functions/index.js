@@ -188,6 +188,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
   // endpoint for email subscription
   exports.subscribeToEmailUpdates = functions.https.onRequest((req, res) => {
      console.log(req.params);  
+     console.log(functions.config());
      const sanityClient = require('@sanity/client');
      const client = sanityClient({
        projectId: functions.config().sanity.projectid,
