@@ -66,7 +66,7 @@ oarc.enableSignup = ()=>{
         formFields.forEach((field)=>{
             field.value = st[field.id] ? st[field.id] : '';
 
-            if(el.type == "radio" || el.type == "checkbox"){
+            if(field.type == "radio" || field.type == "checkbox"){
                 field.checked = st[field.id];
             }else {
                 field.value = st[field.id] ? st[field.id] : '';
