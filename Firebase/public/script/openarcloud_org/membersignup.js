@@ -55,7 +55,7 @@ oarc.enableSignup = ()=>{
         console.log("checks local storage");
         let storage = window.localStorage;
         let s = storage.getItem('signupState');
-        oarc.signupState =  s ? s : oarc.signupState ; 
+        oarc.signupState =  s ? JSON.parse(s) : oarc.signupState ; 
         if(oarc.signupState){
             console.log("found previous state");
             let st = JSON.parse(oarc.signupState);
@@ -63,10 +63,8 @@ oarc.enableSignup = ()=>{
             
             // set field values from "cache"
             formFields.forEach((field)=>{
-                field.val = st[field.id]
+                field.val = st[field.id] ? st[field.id] : undefined;
             });
-
-
         }
     }
 
