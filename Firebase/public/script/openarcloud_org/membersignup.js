@@ -28,7 +28,7 @@ oarc.blurFunc = (e)=>{
         if(e && e.srcElement){
             let el = e.srcElement
             oarc.signupState[el.id] = el.value;
-            window.localStorage.set('signupState', JSON.stringify(oarc.signupState));// store updated value
+            window.localStorage.setItem('signupState', JSON.stringify(oarc.signupState));// store updated value
         }  
     }
 }
@@ -60,7 +60,7 @@ oarc.enableSignup = ()=>{
 
         // set field values from "cache"
         formFields.forEach((field)=>{
-            field.val = st[field.id] ? st[field.id] : undefined;
+            field.value = st[field.id] ? st[field.id] : '';
         });
         
     }
