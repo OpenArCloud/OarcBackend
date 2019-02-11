@@ -164,6 +164,14 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
       return null;
     }
 
+    const sanityClient = require('@sanity/client');
+    const client = sanityClient({
+      projectId: functions.config().sanity.projectid,
+      dataset: functions.config().sanity.dataset,
+      token: functions.config().sanity.token,
+      useCdn: false // `false` if you want to ensure fresh data
+    });      
+
     var stripe = require("stripe")(functions.config().stripe.key_live);    
     const payment_info = change.after.val();
     console.log('token', payment_info.token.id);
@@ -198,7 +206,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
               amount: chargedAmount,
               date_paid: dtIsoString,
             }, () => {
-              resolve(true);
+              resolve(dtIsoString);
             });                        
           } else {
             console.log('Error: ', err);
@@ -207,11 +215,23 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
               msg: err.code || 'Stripe Exception',
             }, () => {
               reject(err);    
-            });                                    
+            });                                                
           }
         });      
       });
-    }).catch(err=>{
+    }).then ( dateCreated => {
+      if(dateCreated) {
+        return client.patch(context.params.uid).set({
+          hasPaid : true,
+          membershipstartdate: dateCreated,
+          lastpaymentdate : dateCreated
+        }).commit();        
+      } else {
+        return null;
+      }
+    }).then( document => 
+      console.log('Sanity document updated with payment info', document)
+    ).catch(err=>{
       console.log('Error catch: ', err);
       return err;
     });
