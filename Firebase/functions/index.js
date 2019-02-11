@@ -156,6 +156,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
   //   });        
   // });
 
+
   exports.createStripeCharge = functions.database.ref('/members/{uid}/payment_info')
   .onWrite((change, context) => {    
 
