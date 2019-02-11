@@ -15,10 +15,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
     const dtIsoString = new Date().toISOString();
     return app.database().ref('members/'+user.uid).set({
         created_at: dtIsoString,
-        isLoggedIn: false,
-        personal_details : {
-          email : user.email
-        }      
+        isLoggedIn: false
       }).then(()=>{
         console.log("user created with id: " + user.uid);
         
@@ -48,21 +45,21 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
 
   });
 
-  exports.onUserProfileUpdate = functions.database.ref('/members/{uid}')
-    .onUpdate((change, context) => {
+  exports.onUserProfileUpdate = functions.database.ref('/members/{uid}/personal_details')
+    .onCreate((snapshot, context) => {
 
       //Exit when the data is deleted.    
-      if (!change.after.exists()) {
-        return null;
-      }
+      // if (!change.after.exists()) {
+      //   return null;
+      // }
 
       const path = require('path');
       const os = require('os');
       const fs = require('fs');
       
       //Grab the current value of what was written to the Realtime Database.
-      const member_obj = change.after.val();
-      const pdetails = member_obj.personal_details;
+      const pdetails = snapshot.val();
+      //const pdetails = member_obj.personal_details;
 
       const sanityClient = require('@sanity/client');
       const client = sanityClient({
@@ -91,7 +88,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
       };      
 
       return client.patch(context.params.uid).set({
-        membertype : member_obj.membertype,
+        membertype : pdetails.membertype,
         personaldetails : doc
       }).commit().then(new_dcoument => 
       console.log('member is updated in sanity ', new_dcoument)            
@@ -162,25 +159,57 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
   exports.createStripeCharge = functions.database.ref('/members/{uid}/payment_info')
   .onWrite((change, context) => {    
 
-    var stripe = require("stripe")(functions.config().stripe.key);    
+    if (!change.after.exists()) {
+      return null;
+    }
+
+    var stripe = require("stripe")(functions.config().stripe.key_live);    
     const payment_info = change.after.val();
     console.log('token', payment_info.token.id);
-    //console.log('email', context.params.email);
-    return new Promise((resolve, reject) => {
-      stripe.charges.create({
-        amount: 999,
-        currency: functions.config().stripe.currency,
-        source: payment_info.token.id,
-        receipt_email: 'nouman@sitelens.io',
-      }, (err, charge) => {
-        if(charge) {
-          console.log('Charge created: ', charge);
-          resolve({ok: true, msg: charge});  
-        }
-        console.log('Error: ', err);
-        reject(err);    
-      });  
-  
+    //console.log('email', admin.auth().getUser(context.params.uid));
+    var userRecord;
+    const uid = context.params.uid;
+    return admin.auth().getUser(uid)
+    .then (userRec => {
+      userRecord = userRec.toJSON();
+      console.log('user record', userRecord);
+      console.log('user email', userRecord.email);
+      var ref = app.database().ref('/members/'+uid+'/personal_details');
+      return ref.once('value');
+    }).then(snapshot => ((snapshot.val() && snapshot.val().membertype) || 'Anonymous')        
+    ).then( membertype => {
+      console.log('Member Type', membertype);
+      return new Promise((resolve, reject) => {        
+        var chargeAmount = (membertype === 'studentparttimeother')?60:120;
+        chargeAmount = chargeAmount * 100;
+        stripe.charges.create({
+          amount: chargeAmount,
+          currency: functions.config().stripe.currency,
+          source: payment_info.token.id,
+          receipt_email: userRecord.email,
+        }, (err, charge) => {
+          if(charge) {
+            console.log('Charge created: ', charge);
+            const chargedAmount = charge.amount/100;
+            const dtIsoString = new Date().toISOString();
+            app.database().ref('members/'+uid+'/payment_resp/'+payment_info.token.id).set({
+              ok: true,
+              amount: chargedAmount,
+              date_paid: dtIsoString,
+            }, () => {
+              resolve(true);
+            });                        
+          } else {
+            console.log('Error: ', err);
+            app.database().ref('members/'+uid+'/payment_resp/'+payment_info.token.id).set({
+              ok: false,            
+              msg: err.code || 'Stripe Exception',
+            }, () => {
+              reject(err);    
+            });                                    
+          }
+        });      
+      });
     }).catch(err=>{
       console.log('Error catch: ', err);
       return err;
