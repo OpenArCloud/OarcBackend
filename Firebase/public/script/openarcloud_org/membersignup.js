@@ -85,6 +85,7 @@ oarc.enableSignup = ()=>{
     
     
     signupBtn.onclick = (e) => {
+        signupBtn.disabled = true;
         let isOk = true;
         
         
@@ -117,6 +118,7 @@ oarc.enableSignup = ()=>{
                     
                     
                     let uid = res.user.uid;
+                    console.log("initial uid: "+ uid);
                     
                     let personal_details = {
                         city:document.getElementById("city").value,
@@ -129,11 +131,12 @@ oarc.enableSignup = ()=>{
                         linkedin: linkedin,
                         postcodeorzip: postcode_or_zip,
                         organizations: organizations,
-                        jobtitleorrole: jobtitle
+                        jobtitleorrole: jobtitle,
+                        membertype:membertype
                     };    
 
                     let memberUpdate ={}
-                    memberUpdate['members/'+uid+'/membertype'] = membertype;
+                    //memberUpdate['members/'+uid+'/membertype'] = membertype;
                     memberUpdate['members/'+uid+'/personal_details'] =personal_details; 
 
 
@@ -157,6 +160,7 @@ oarc.enableSignup = ()=>{
                                 
                                 let user = firebase.auth().currentUser;
                                 // listen to email verification
+                                console.log("after calling firebase.auth().currentUser.  uid: "+ user.uid);
                                 
                                 // send emailverification
                                 user.sendEmailVerification().then(()=>{
@@ -184,6 +188,7 @@ oarc.enableSignup = ()=>{
                     var errorCode = error.code;
                     var errorMessage = error.message;
                     spinner.style.display='none';
+                    signupBtn.disabled = false;
                     if (errorCode == 'auth/weak-password') {
                         alert('The password is too weak.');
                     } else {
@@ -217,6 +222,9 @@ oarc.enableSignup = ()=>{
             
                     setTimeout(checkVerified, interval) ;
                     } else {
+                        //confirmationinfo
+                    let confirmationinfo = document.getElementById("confirmationinfo");
+                    confirmationinfo.innerHTML = '<b style="color:red;">Your email verification attempt timed out</b>';
                     // display check again button ?
                     console.log("No remaining retries " );
 
@@ -255,7 +263,7 @@ oarc.enableSignup = ()=>{
             <div id="card-errors" role="alert"></div>
             </div>
         
-            <button>Submit Payment</button>
+            <button class="card_payment_button">Submit Payment</button>
         </form>`
 
         container.innerHTML = stripeCardTemplate;
@@ -264,12 +272,46 @@ oarc.enableSignup = ()=>{
     
 
     let enablePayments = ()=>{
+        
+        
         let paymentarea = document.getElementById('paymentarea');
         let paycardbtn = document.getElementById('paycardbtn');
+        let paymentconfirmed = document.getElementById("paymentconfirmed");
+
+        let listenForChargeConfirmed = (tokenid)=>{
+            let user = firebase.auth().currentUser;
+            let path = 'members/'+user.uid+'/payment_resp'
+            //let path = '/members/'+user.uid+'/payment_info/';
+            console.log("when checking if charge is confirmed - uid "+ user.uid);
+            firebase.database().ref(path).on('child_added',(s)=>{
+                console.log(s);
+                //if(s.node_ && s.node_.children_ && s.node_.children_.root_ && s.node_.children_.root_.value){
+                if(s.exists() && s.val()){
+                    //console.log(s.node_.children_.root_.value);
+                    //let child = s.node_.children_.root_.value;
+                    let child = s.val();
+                    if(child!= null){
+                        let t = child;
+    
+                        if(t.ok){
+                            paymentconfirmed.style.display = 'block';
+                            paymentconfirmed.innerHTML = '<div> <b style="color:#9bcb3c; font-size:16px">Payment of ' + t.amount + 'USD for the fee completed! You are now a member of Open AR Cloud! </b><a href="/signedin/my-profile" class="oarc-profile">Go to your profile</a></div>';
+                        } else {
+                            paymentconfirmed.style.display = 'block';
+                            paymentconfirmed.innerHTML = '<h2 style="color:red">Payment declined! Try another card.</h2>'
+                        }
+    
+                    }
+                }
+
+            });
+            
+        };
+
         paycardbtn.onclick = ()=>{
             useStripeCard(paymentarea);
-            //var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
-            var stripe = Stripe('pk_test_SF8tZucaqbkF7FAwDQ0tBDUC');
+            var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
+            //var stripe = Stripe('pk_test_SF8tZucaqbkF7FAwDQ0tBDUC');
             var elements = stripe.elements();
             // Custom styling can be passed to options when creating an Element.
             // (Note that this demo uses a wider set of styles than the guide below.)
@@ -327,19 +369,29 @@ oarc.enableSignup = ()=>{
                             timestamp:Date.now()
                         }
                         let path = '/members/'+user.uid+'/payment_info';
+                        console.log("when token was created -   uid: "+ user.uid);
                         firebase.database().ref(path).update(payment_info).then((error) =>{
                                 if (error) {
                                     // The write failed...
                                     console.log("failed to submit payment data");
+                                    paymentconfirmed.style.display = 'block';
+                                    paymentconfirmed.innerHTML = '<b style="color:red" >Failed to submit payment data!</b>';
                                 } else {
                                     // Data saved successfully!
                                     console.log("payment details submitted");
+                                    paymentconfirmed.style.display = 'block';
+                                    paymentconfirmed.innerHTML = '<h2>Paymentdetails submitted</h2>';
+                                    // TODO: Listen for payment confirmed
+                                    listenForChargeConfirmed(result.token.id);    
                                 }
                         });
                         
                     }
                 });
             });
+
+
+
 
 
         };
