@@ -46,7 +46,19 @@ oarc.getFormFields = ()=>{
     });
 };
 
-
+oarc.logErrorToRTDB = (error, errorMessage, uid)=>{
+    if(firebase.database()){
+        
+        let path  = uid ? '/client_errors/user/'+uid: '/client_errors/unidentified';
+        let ref = firebase.database().ref(path);
+        let errorObj = {
+            error: error,
+            errorMessage: errorMessage
+        };
+        let errorRef =  newMessageRef = ref.push();
+        errorRef.set(errorObj);
+    }
+}
 
 
 oarc.enableSignup = ()=>{
@@ -177,6 +189,8 @@ oarc.enableSignup = ()=>{
                                     emailverificationerrormessage.innerHTML = "There was an error: Email verification has not been sent! You could try again"
                                     
                                     spinner.style.display='none';
+
+                                    oarc.logErrorToRTDB(err, 'Verification email not sent:  ' + err.message, user.uid);
                                 });
 
                             }
@@ -195,6 +209,8 @@ oarc.enableSignup = ()=>{
                         alert(errorMessage);
                     }
                     console.log(error);
+                    oarc.logErrorToRTDB(error, 'Error during member creation:  ' + error.message);
+
                 });
             }
         
@@ -231,7 +247,8 @@ oarc.enableSignup = ()=>{
                     }
                 }
         }).catch((err)=>{
-            console.log(err)
+            console.log(err);
+            oarc.logErrorToRTDB(err, 'Error with email verifiaction', user.uid);
         });
     }
 
@@ -243,6 +260,7 @@ oarc.enableSignup = ()=>{
             retries = 50;
             setTimeout(checkVerified, interval);
         }).catch((err)=>{
+            oarc.logErrorToRTDB(err, 'Error with confirmation email', user.uid);
         });
     }
 
@@ -268,6 +286,7 @@ oarc.enableSignup = ()=>{
 
         container.innerHTML = stripeCardTemplate;
     };
+
 
     
 
@@ -302,6 +321,8 @@ oarc.enableSignup = ()=>{
                         }
     
                     }
+                } else {
+                    oarc.logErrorToRTDB(s.error ? s.error : {}, 'Error with /payment_response child element', user.uid);
                 }
 
             });
@@ -309,6 +330,7 @@ oarc.enableSignup = ()=>{
         };
 
         paycardbtn.onclick = ()=>{
+            let user_uid = firebase.auth().currentUser.uid;
             useStripeCard(paymentarea);
             var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
             //var stripe = Stripe('pk_test_SF8tZucaqbkF7FAwDQ0tBDUC');
@@ -344,6 +366,7 @@ oarc.enableSignup = ()=>{
                 var displayError = document.getElementById('card-errors');
                 if (event.error) {
                 displayError.textContent = event.error.message;
+
                 } else {
                 displayError.textContent = '';
                 }
@@ -358,6 +381,7 @@ oarc.enableSignup = ()=>{
                         // Inform the user if there was an error.
                         var errorElement = document.getElementById('card-errors');
                         errorElement.textContent = result.error.message;
+                        oarc.logErrorToRTDB(result.error, "card not validated" + result.error.message, user_uid)
                     } else {
                         // Send the token to your server.
                         //stripeTokenHandler(result.token);
@@ -376,6 +400,7 @@ oarc.enableSignup = ()=>{
                                     console.log("failed to submit payment data");
                                     paymentconfirmed.style.display = 'block';
                                     paymentconfirmed.innerHTML = '<b style="color:red" >Failed to submit payment data!</b>';
+                                    oarc.logErrorToRTDB(error, 'Error when updating "payment_info"', user_uid);
                                 } else {
                                     // Data saved successfully!
                                     console.log("payment details submitted");
@@ -391,7 +416,7 @@ oarc.enableSignup = ()=>{
             });
 
 
-
+            
 
 
         };
