@@ -245,6 +245,7 @@ oarc.enableSignup = ()=>{
                     confirmationinfo.innerHTML = '<b style="color:red;">Your email verification attempt timed out</b>';
                     // display check again button ?
                     console.log("No remaining retries " );
+                    oarc.logErrorToRTDB({}, 'Timeout for email verification No remaining retries', user.uid);
 
                     }
                 }
