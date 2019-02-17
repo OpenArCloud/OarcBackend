@@ -53,7 +53,8 @@ oarc.logErrorToRTDB = (error, errorMessage, uid)=>{
         let ref = firebase.database().ref(path);
         let errorObj = {
             error: error,
-            errorMessage: errorMessage
+            errorMessage: errorMessage,
+            timestamp: Date.now()
         };
         let errorRef =  newMessageRef = ref.push();
         errorRef.set(errorObj);
