@@ -118,7 +118,7 @@ oarc.enableSignup = ()=>{
             if(firebase){
                 let email = document.getElementById("email").value;
                 let password = document.getElementById("password").value;
-                firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(email, password).then((res) =>{
+                firebase.auth().createUserWithEmailAndPassword(email, password).then((res) =>{
                 
             
                     // PREPARE MEMBER DETAILS
@@ -205,11 +205,13 @@ oarc.enableSignup = ()=>{
                     signupBtn.disabled = false;
                     if (errorCode == 'auth/weak-password') {
                         alert('The password is too weak.');
+                        oarc.logErrorToRTDB(error, 'Error during member password is too weak:  ' + error.message);
                     } else {
                         alert(errorMessage);
+                        oarc.logErrorToRTDB(error, 'Error during member creation:  ' + error.message);
                     }
                     console.log(error);
-                    oarc.logErrorToRTDB(error, 'Error during member creation:  ' + error.message);
+   
 
                 });
             }
