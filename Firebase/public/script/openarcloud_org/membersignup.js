@@ -320,7 +320,9 @@ oarc.enableSignup = ()=>{
                             paymentconfirmed.innerHTML = '<div> <b style="color:#9bcb3c; font-size:16px">Payment of ' + t.amount + 'USD for the fee completed! You are now a member of Open AR Cloud! </b><a href="/signedin/my-profile" class="oarc-profile">Go to your profile</a></div>';
                         } else {
                             paymentconfirmed.style.display = 'block';
-                            paymentconfirmed.innerHTML = '<h2 style="color:red">Payment declined! Try another card.</h2>'
+                            paymentconfirmed.innerHTML = '<h2 style="color:red">Payment declined! Try another card.</h2>';
+                            oarc.logErrorToRTDB( {chargeresponse:t}, 'Error - payment declined ', user.uid);
+
                         }
     
                     }
