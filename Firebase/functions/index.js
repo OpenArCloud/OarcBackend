@@ -13,31 +13,27 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
     });    
             
     const dtIsoString = new Date().toISOString();
-    return app.database().ref('members/'+user.uid).set({
+    const doc = {
+      _id: user.uid,
+      _createdAt: dtIsoString,
+      _type: 'member',
+      personaldetails: {
+        _type: 'person',
+        email: user.email,            
+      }            
+    };        
+
+    return client.createOrReplace(doc).then(res => {
+
+      console.log(`Member was created, document ID is ${res._id}`)
+      
+      return app.database().ref('members/'+user.uid).set({
         created_at: dtIsoString,
         isLoggedIn: false
-      }).then(()=>{
+      });
+    }).then(()=>{
         console.log("user created with id: " + user.uid);
-        
-        //const query = '*[_type == "person"]  | order(_id, desc) {_id, firstname, lastname}';
-        //return client.fetch(query);
-
-        const doc = {
-            _id: user.uid,
-            _createdAt: dtIsoString,
-            _type: 'member',
-            personaldetails: {
-              _type: 'person',
-              email: user.email,            
-            }            
-        };        
-        return client.createOrReplace(doc);        
-    }).then(res => {        
-        // persons.forEach(person => {
-        //     console.log(person);
-        // });            
-        console.log(`Member was created, document ID is ${res._id}`)
-        return 0;
+        return 0;                
     }).catch(err =>{
         console.log('Error: ' + err);
         return 1;

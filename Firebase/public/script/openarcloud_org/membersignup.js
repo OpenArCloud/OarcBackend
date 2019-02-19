@@ -119,85 +119,34 @@ oarc.enableSignup = ()=>{
             if(firebase){
                 let email = document.getElementById("email").value;
                 let password = document.getElementById("password").value;
-                firebase.auth().createUserWithEmailAndPassword(email, password).then((res) =>{
-                
-            
+
                     // PREPARE MEMBER DETAILS
-                    let postcode_or_zip = document.getElementById("postcode_or_zip")? document.getElementById("postcode_or_zip").value : undefined;
-                    let jobtitle = document.getElementById("jobtitle") ? document.getElementById("jobtitle").value : undefined;
-                    let linkedin = document.getElementById("linkedin") ? document.getElementById("linkedin").value : undefined;
-                    let membertype = document.getElementById("member_type_pro").checked ? "professional" : "studentparttimeother";
-                    let organizations = document.getElementById("organization") ? document.getElementById("organization").value : undefined;
-                    
-                    
-                    let uid = res.user.uid;
-                    console.log("initial uid: "+ uid);
-                    
-                    let personal_details = {
-                        city:document.getElementById("city").value,
-                        country:document.getElementById("country").value,
-                        firstname: document.getElementById("first-name").value,
-                        lastname: document.getElementById("last-name").value,
-                        yearofbirth: parseInt(document.getElementById("birthyear").value),
-                        streetaddress: document.getElementById("address").value,
-                        email: document.getElementById("email").value,
-                        linkedin: linkedin,
-                        postcodeorzip: postcode_or_zip,
-                        organizations: organizations,
-                        jobtitleorrole: jobtitle,
-                        membertype:membertype
-                    };    
+                let postcode_or_zip = document.getElementById("postcode_or_zip")? document.getElementById("postcode_or_zip").value : undefined;
+                let jobtitle = document.getElementById("jobtitle") ? document.getElementById("jobtitle").value : undefined;
+                let linkedin = document.getElementById("linkedin") ? document.getElementById("linkedin").value : undefined;
+                let membertype = document.getElementById("member_type_pro").checked ? "professional" : "studentparttimeother";
+                let organizations = document.getElementById("organization") ? document.getElementById("organization").value : undefined;
 
-                    let memberUpdate ={}
-                    //memberUpdate['members/'+uid+'/membertype'] = membertype;
-                    memberUpdate['members/'+uid+'/personal_details'] =personal_details; 
+                let personal_details = {
+                    city:document.getElementById("city").value,
+                    country:document.getElementById("country").value,
+                    firstname: document.getElementById("first-name").value,
+                    lastname: document.getElementById("last-name").value,
+                    yearofbirth: parseInt(document.getElementById("birthyear").value),
+                    streetaddress: document.getElementById("address").value,
+                    email: document.getElementById("email").value,
+                    linkedin: linkedin,
+                    postcodeorzip: postcode_or_zip,
+                    organizations: organizations,
+                    jobtitleorrole: jobtitle,
+                    membertype:membertype
+                };                    
 
-
-                    let signgupform = document.getElementById('signupform');
-
-                    // confirmation step elements
-                    let confirmationstep= document.getElementById('confirmationstep');
-                    let emailverificationerror = document.getElementById('emailverificationerror');
-                    let emailverificationerrormessage = document.getElementById('emailverificationerrormessage');
-                
-
-                    // FIREBASE MEMBER UPDATE
-                    firebase.database().ref().update(memberUpdate,
-                        (error) =>{
-                            if (error) {
-                                // The write failed...
-                                console.log("failed to save top-level member data");
-                            } else {
-                                // Data saved successfully!
-                                console.log("successfully saved top-level member data!");
-                                
-                                let user = firebase.auth().currentUser;
-                                // listen to email verification
-                                console.log("after calling firebase.auth().currentUser.  uid: "+ user.uid);
-                                
-                                // send emailverification
-                                user.sendEmailVerification().then(()=>{
-                                    console.log("Sendt email verification email!");
-                                    console.log("waiting for confirmation");
-                                    signgupform.style.display = 'none';
-                                    confirmationstep.style.display = 'block';
-                                    setTimeout(checkVerified, interval);
-
-                                }).catch((err)=>{
-                                    console.log(err);
-                                    
-                                    emailverificationerror.style.display = 'block'
-                                    emailverificationerrormessage.innerHTML = "There was an error: Email verification has not been sent! You could try again"
-                                    
-                                    spinner.style.display='none';
-
-                                    oarc.logErrorToRTDB(err, 'Verification email not sent:  ' + err.message, user.uid);
-                                });
-
-                            }
-                        }
-                    );
-                
+                firebase.auth().createUserWithEmailAndPassword(email, password).then((res) =>{                        
+                    if(res) {
+                        //user is created, let's listen for the corresponding record being created in RTDB 
+                        listenForSignupCompleted(personal_details);
+                    }                                                                            
                 }).catch(function(error) { // catch firebase member creation error
                     // Handle Errors here.
                     var errorCode = error.code;
@@ -221,10 +170,79 @@ oarc.enableSignup = ()=>{
             // form wasn not validated
             console.log("form is not valid");
         }
+    }
+
+    let listenForSignupCompleted = (personal_details)=>{
+        let user = firebase.auth().currentUser;
+        let path = 'members/'+user.uid;
+
+        
+        console.log("Checking if we have a member record created for uid "+ user.uid);
+        firebase.database().ref(path).on('child_added',(s)=>{
+            console.log(s);
+            //if(s.node_ && s.node_.children_ && s.node_.children_.root_ && s.node_.children_.root_.value){
+            if(s.exists() && s.val()){                
+                //ok we have a member record created by onUserCreate() in RTDB.
+                //Detach the listener first as it gets called for each child under /members/uid
+                firebase.database().ref(path).off('child_added');
+
+                let uid = user.uid;                
+                
+                let memberUpdate ={}
+                //memberUpdate['members/'+uid+'/membertype'] = membertype;
+                memberUpdate['members/'+uid+'/personal_details'] =personal_details; 
+
+
+                let signgupform = document.getElementById('signupform');
+
+                // confirmation step elements
+                let confirmationstep= document.getElementById('confirmationstep');
+                let emailverificationerror = document.getElementById('emailverificationerror');
+                let emailverificationerrormessage = document.getElementById('emailverificationerrormessage');
+            
+                //Safe to update the member record now, since onUserCreate() has already finished with it and 
+                //it will not be overwritten
+                // FIREBASE MEMBER UPDATE
+                firebase.database().ref().update(memberUpdate,
+                    (error) =>{
+                        if (error) {
+                            // The write failed...
+                            console.log("failed to save top-level member data");
+                        } else {
+                            // Data saved successfully!
+                            console.log("successfully saved top-level member data!");
+                            
+                            // listen to email verification
+                            console.log("after calling firebase.auth().currentUser.  uid: "+ user.uid);
+                            
+                            // send emailverification
+                            user.sendEmailVerification().then(()=>{
+                                console.log("Sendt email verification email!");
+                                console.log("waiting for confirmation");
+                                signgupform.style.display = 'none';
+                                confirmationstep.style.display = 'block';
+                                setTimeout(checkVerified, interval);
+
+                            }).catch((err)=>{
+                                console.log(err);
+                                
+                                emailverificationerror.style.display = 'block'
+                                emailverificationerrormessage.innerHTML = "There was an error: Email verification has not been sent! You could try again"
+                                
+                                spinner.style.display='none';
+
+                                oarc.logErrorToRTDB(err, 'Verification email not sent:  ' + err.message, user.uid);
+                            });
+
+                        }
+                    }
+                );
+            } 
+
+        });
 
         // EMAIL VERIFICATION
-        let checkVerified = ()=>{
-            let user = firebase.auth().currentUser;
+        let checkVerified = ()=>{            
             user.reload().then(()=>{
                 console.log("reloaded user:");
                 if(user.emailVerified){
@@ -254,9 +272,9 @@ oarc.enableSignup = ()=>{
             console.log(err);
             oarc.logErrorToRTDB(err, 'Error with email verifiaction', user.uid);
         });
-    }
+        
+    };
 
-    
     
     let sendConfirmationEmail = ()=>{
         let user = firebase.auth().currentUser;
