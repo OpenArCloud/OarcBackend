@@ -356,8 +356,8 @@ oarc.enableSignup = ()=>{
         paycardbtn.onclick = ()=>{
             let user_uid = firebase.auth().currentUser.uid;
             useStripeCard(paymentarea);
-            var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
-            //var stripe = Stripe('pk_test_SF8tZucaqbkF7FAwDQ0tBDUC');
+            //var stripe = Stripe('pk_live_Y7gUPLvMqjjp8SFDNBPDFG62');
+            var stripe = Stripe('pk_test_SF8tZucaqbkF7FAwDQ0tBDUC');
             var elements = stripe.elements();
             // Custom styling can be passed to options when creating an Element.
             // (Note that this demo uses a wider set of styles than the guide below.)
