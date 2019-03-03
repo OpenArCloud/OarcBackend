@@ -5,6 +5,29 @@ const sgMail = require('@sendgrid/mail');
 admin = fb.config.adm;
 app = fb.config.app;  
 
+
+let sendGridKeySet = false; 
+
+const sendMail = (to,subject,text, html, attachments)=>{
+  if(!sendGridKeySet){
+    let key = functions.config().sendgrid.dev_key;
+    sgMail.setApiKey(key);
+    sendGridKeySet = true;
+  }
+ 
+  const msg = {
+    to: to,
+    from: 'openarcloud.association@gmail.com',
+    subject: subject,
+    text: text,
+    html: html,
+  };
+
+  sgMail.send(msg);
+}
+
+
+
 exports.onCreateUser = functions.auth.user().onCreate((user) => {    
     //const sanityClient = require('@sanity/client');
     const client = sanityClient({
@@ -83,7 +106,9 @@ exports.onUserProfileUpdate = functions.database.ref('/members/{uid}/personal_de
       postcodeorzip   : pdetails.postcodeorzip,
       streetaddress   : pdetails.streetaddress,
       yearofbirth     : pdetails.yearofbirth
-    };      
+    };
+    
+    sendMail(pdetails.email, "Test email - create user", "testing that we can send confirmation email", "testing that we can send <strong>confirmation email </strong>");
 
     return client.patch(context.params.uid).set({
       membertype : pdetails.membertype,
@@ -154,25 +179,6 @@ exports.onUserProfileUpdate = functions.database.ref('/members/{uid}/personal_de
   //   });        
   // });
 
-let sendGridKeySet = false; 
-
-const sendMail = (to,subject,text, html, attachments)=>{
-  if(!sendGridKeySet){
-    let key = functions.config().sendgrid.dev_key;
-    sgMail.setApiKey(key);
-    sendGridKeySet = true;
-  }
- 
-  const msg = {
-    to: to,
-    from: 'openarcloud.association@gmail.com',
-    subject: subject,
-    text: text,
-    html: html,
-  };
-
-  sgMail.send(msg);
-}
 
 
   exports.createStripeCharge = functions.database.ref('/members/{uid}/payment_info')
