@@ -1,10 +1,12 @@
 const functions = require('firebase-functions');
 const fb = require('./firebase-app-config.js');
+const sanityClient = require('@sanity/client');
+const sgMail = require('@sendgrid/mail');
 admin = fb.config.adm;
 app = fb.config.app;  
 
 exports.onCreateUser = functions.auth.user().onCreate((user) => {    
-    const sanityClient = require('@sanity/client');
+    //const sanityClient = require('@sanity/client');
     const client = sanityClient({
       projectId: functions.config().sanity.projectid,
       dataset: functions.config().sanity.dataset,
@@ -39,98 +41,98 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
         return 1;
     });            
 
+});
+
+exports.onUserProfileUpdate = functions.database.ref('/members/{uid}/personal_details')
+  .onCreate((snapshot, context) => {
+
+    //Exit when the data is deleted.    
+    // if (!change.after.exists()) {
+    //   return null;
+    // }
+
+    const path = require('path');
+    const os = require('os');
+    const fs = require('fs');
+    
+    //Grab the current value of what was written to the Realtime Database.
+    const pdetails = snapshot.val();
+    //const pdetails = member_obj.personal_details;
+
+    //const sanityClient = require('@sanity/client');
+    const client = sanityClient({
+      projectId: functions.config().sanity.projectid,
+      dataset: functions.config().sanity.dataset,
+      token: functions.config().sanity.token,
+      useCdn: false // `false` if you want to ensure fresh data
+    });      
+    
+    // const bucket = admin.storage().bucket('openarcloud.appspot.com');
+    // const filePath = pdetails.image_ref;
+    // const fileName = path.basename(filePath);
+    // const tempFilePath = path.join(os.tmpdir(), fileName);
+
+    const doc = {
+      city            : pdetails.city,
+      country         : pdetails.country,
+      email           : pdetails.email,
+      firstname       : pdetails.firstname,          
+      jobtitleorrole  : pdetails.jobtitleorrole,
+      lastname        : pdetails.lastname,
+      organizations   : pdetails.organizations,
+      postcodeorzip   : pdetails.postcodeorzip,
+      streetaddress   : pdetails.streetaddress,
+      yearofbirth     : pdetails.yearofbirth
+    };      
+
+    return client.patch(context.params.uid).set({
+      membertype : pdetails.membertype,
+      personaldetails : doc
+    }).commit().then(new_dcoument => 
+    console.log('member is updated in sanity ', new_dcoument)            
+  ).catch(error => {
+      console.error('Upload failed:', error.message)
   });
 
-  exports.onUserProfileUpdate = functions.database.ref('/members/{uid}/personal_details')
-    .onCreate((snapshot, context) => {
+    // return bucket.file(filePath).download({
+    //   destination: tempFilePath,
+    // }).then(() => 
+    //   console.log('Image downloaded locally to', tempFilePath)        
+    // ).then(()=> 
+    //   client.assets.upload('image', fs.createReadStream(tempFilePath), {filename: fileName})
+    // ).then(document => {
+    //   console.log('The image was uploaded!', document);
+    //   const doc = {
+    //     city            : pdetails.city,
+    //     country         : pdetails.country,
+    //     email           : pdetails.email,
+    //     firstname       : pdetails.firstname,          
+    //     jobtitleorrole  : pdetails.jobtitleorrole,
+    //     lastname        : pdetails.lastname,
+    //     organizations   : pdetails.organizations,
+    //     portrait        : {
+    //       _type: 'image',
+    //       asset: {
+    //         _ref:document._id,
+    //         _type: 'reference'
+    //       }
+    //     },  
+    //     postcodeorzip   : pdetails.postcodeorzip,
+    //     streetaddress   : pdetails.streetaddress,
+    //     yearofbirth     : pdetails.yearofbirth
+    //   };      
 
-      //Exit when the data is deleted.    
-      // if (!change.after.exists()) {
-      //   return null;
-      // }
+    //   return client.patch(context.params.uid).set({
+    //     membertype : member_obj.membertype,
+    //     personaldetails : doc
+    //   }).commit();
+    // }).then(new_dcoument => 
+    //   console.log('member is updated in sanity ', new_dcoument)            
+    // ).catch(error => {
+    //     console.error('Upload failed:', error.message)
+    // });
 
-      const path = require('path');
-      const os = require('os');
-      const fs = require('fs');
-      
-      //Grab the current value of what was written to the Realtime Database.
-      const pdetails = snapshot.val();
-      //const pdetails = member_obj.personal_details;
-
-      const sanityClient = require('@sanity/client');
-      const client = sanityClient({
-        projectId: functions.config().sanity.projectid,
-        dataset: functions.config().sanity.dataset,
-        token: functions.config().sanity.token,
-        useCdn: false // `false` if you want to ensure fresh data
-      });      
-      
-      // const bucket = admin.storage().bucket('openarcloud.appspot.com');
-      // const filePath = pdetails.image_ref;
-      // const fileName = path.basename(filePath);
-      // const tempFilePath = path.join(os.tmpdir(), fileName);
-
-      const doc = {
-        city            : pdetails.city,
-        country         : pdetails.country,
-        email           : pdetails.email,
-        firstname       : pdetails.firstname,          
-        jobtitleorrole  : pdetails.jobtitleorrole,
-        lastname        : pdetails.lastname,
-        organizations   : pdetails.organizations,
-        postcodeorzip   : pdetails.postcodeorzip,
-        streetaddress   : pdetails.streetaddress,
-        yearofbirth     : pdetails.yearofbirth
-      };      
-
-      return client.patch(context.params.uid).set({
-        membertype : pdetails.membertype,
-        personaldetails : doc
-      }).commit().then(new_dcoument => 
-      console.log('member is updated in sanity ', new_dcoument)            
-    ).catch(error => {
-        console.error('Upload failed:', error.message)
-    });
-
-      // return bucket.file(filePath).download({
-      //   destination: tempFilePath,
-      // }).then(() => 
-      //   console.log('Image downloaded locally to', tempFilePath)        
-      // ).then(()=> 
-      //   client.assets.upload('image', fs.createReadStream(tempFilePath), {filename: fileName})
-      // ).then(document => {
-      //   console.log('The image was uploaded!', document);
-      //   const doc = {
-      //     city            : pdetails.city,
-      //     country         : pdetails.country,
-      //     email           : pdetails.email,
-      //     firstname       : pdetails.firstname,          
-      //     jobtitleorrole  : pdetails.jobtitleorrole,
-      //     lastname        : pdetails.lastname,
-      //     organizations   : pdetails.organizations,
-      //     portrait        : {
-      //       _type: 'image',
-      //       asset: {
-      //         _ref:document._id,
-      //         _type: 'reference'
-      //       }
-      //     },  
-      //     postcodeorzip   : pdetails.postcodeorzip,
-      //     streetaddress   : pdetails.streetaddress,
-      //     yearofbirth     : pdetails.yearofbirth
-      //   };      
-
-      //   return client.patch(context.params.uid).set({
-      //     membertype : member_obj.membertype,
-      //     personaldetails : doc
-      //   }).commit();
-      // }).then(new_dcoument => 
-      //   console.log('member is updated in sanity ', new_dcoument)            
-      // ).catch(error => {
-      //     console.error('Upload failed:', error.message)
-      // });
-
-  });
+});
 
   // exports.createStripeCharge = functions.https.onRequest((req, res) => {
   //   console.log(req.body);        
@@ -152,6 +154,26 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
   //   });        
   // });
 
+let sendGridKeySet = false; 
+
+const sendMail = (to,subject,text, html, attachments)=>{
+  if(!sendGridKeySet){
+    let key = functions.config().sendgrid.dev_key;
+    sgMail.setApiKey(key);
+    sendGridKeySet = true;
+  }
+ 
+  const msg = {
+    to: to,
+    from: 'openarcloud.association@gmail.com',
+    subject: subject,
+    text: text,
+    html: html,
+  };
+
+  sgMail.send(msg);
+}
+
 
   exports.createStripeCharge = functions.database.ref('/members/{uid}/payment_info')
   .onWrite((change, context) => {    
@@ -160,7 +182,7 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
       return null;
     }
 
-    const sanityClient = require('@sanity/client');
+    //const sanityClient = require('@sanity/client');
     const client = sanityClient({
       projectId: functions.config().sanity.projectid,
       dataset: functions.config().sanity.dataset,
@@ -225,9 +247,13 @@ exports.onCreateUser = functions.auth.user().onCreate((user) => {
       } else {
         return null;
       }
-    }).then( document => 
-      console.log('Sanity document updated with payment info', document)
-    ).catch(err=>{
+    }).then( document => {
+      console.log('Sanity document updated with payment info', document);
+
+      // send success email
+      sendMail(userRecord.email, "Thanks you for becoming an Open AR Cloud member!", "testmail on membership","testmail on <strong>membership</strong>");
+
+    }).catch(err=>{
       console.log('Error catch: ', err);
       return err;
     });
