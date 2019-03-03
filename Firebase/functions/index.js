@@ -252,7 +252,7 @@ const sendMail = (to,subject,text, html, attachments)=>{
 
       // send success email
       sendMail(userRecord.email, "Thanks you for becoming an Open AR Cloud member!", "testmail on membership","testmail on <strong>membership</strong>");
-
+      return true;
     }).catch(err=>{
       console.log('Error catch: ', err);
       return err;
